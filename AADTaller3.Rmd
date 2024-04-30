@@ -1,0 +1,72 @@
+---
+title: "AADTaller3"
+output: html_document
+date: "2024-04-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problema \# 1
+
+Una familia de distribuciones Pθ con θ ∈ Θ pertenece a la familia exponencial de distribucciones si su fmp/fdp puede escribirse como: p(x\|η) = h(x)exp(η(θ)t(x) − a(θ)) Para funciones reales h(x), a(θ) y t(x). Muestre que tanto la distribución bernoulli (utilizada para la regresión logística), la distribuci´on normal (utilizada en la regresi´on lineal) y la distribuci´on Poisson (utilizada en la regresi´on Poisson sobre conteos) pertenecen a esta familia de distribuciones.
+
+```{r}
+
+```
+
+## Problema \# 2
+
+La Universidad de California Irvine (UCI) tiene un repositorio de datos de ejemplo para el uso de machine learning y aprendizaje estad´ıstico. Uno de los conjuntos de datos es el denominado Heart Disease, su descripci´on detallada se encuentra en la URL a continuaci´on: <https://archive.ics.uci.edu/ml/datasets/Heart+Disease> Utilice los datos procesados disponibles en el enlace presentado a continuaci´on para el desarrollo del ejercicio, <http://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed>. cleveland.data 1 Con el conjunto de datos completo, construya un modelo de regresi´on log´ıstico con funci´on de enlace logit tomando como respuesta la presencia de la enfermedad cardiaca, use las dem´as variables como explicativas en el modelo de regresi´on. Revise las URL dadas para la definici´on de cada una de las variables y note que debe obtener la variable respuesta categorizando una de las variables del conjunto de datos. Siga los siguientes pasos en la realizaci´on del ejercicio:
+
+### Item \# 1
+
+Imputar datos: El conjunto de datos tiene datos perdidos en algunas variables. Estos est´an notados con un ?. Impute los valores perdidos como la mediana de los datos para las variables corresponientes.
+
+```{r}
+
+```
+
+### Item \# 2
+
+Revisar las distribuciones bivariadas: Revise la distribuci´on de la variable respuesta para cada una de las covariables categoricas de manera bivariada. ¿observa alg´un inconveniente con alguna de las variables al hacer el an´alisis?.
+
+```{r}
+```
+
+### Item \# 3
+
+Modelo bivariado: Calcule manualmente (como lo vimos en clase, a partir de la tabla de contingencia), los par´ametros estimados de regresi´on log´ıstica considerando ´unicamente la variable fbs (glucemia en ayunas) y la variable respuesta. Verifique el resultado ajustando el glm correspondiente.
+
+```{r}
+```
+
+### Item \# 4
+
+Modelo multivariado: Ajuste un nuevo modelo con todas las variables. ¿cu´ales variables son significativas mediante el test de Wald? ¿cu´ales no lo son?.
+
+```{r}
+```
+
+### Item \# 5
+
+Visualizaci´on de probabilidades predichas bajo modelo multivariado: Usando el modelo del punto anterior, encuentre las probabilidades de presentar enfermedad cardiaca y visualicelas junto a la variable respuesta. ¿Describe el modelo la presencia de enfermedad cardiaca?.
+
+```{r}
+```
+
+## Problema \# 3
+
+El conjunto de datos AAD-taller03.xlsx contiene la predicci´on de incumplimiento de pago de tarjeta de cr´edito bajo dos modelos log´ısticos diferentes para un total de 9080 clientes. Se cuenta adem´as con la variable de incumplimiento observada al finalizar el periodo. ¿Cu´al de los dos modelos log´ısticos tiene mayor poder de predicci´on? Explique con fundamento estad´ıstico su resultado.
+
+```{r, echo=FALSE}
+
+```
+
+## Problema \# 4
+
+Repita el problema 2, pero en lugar de imputar los datos mediante la mediana en el punto 1, utilice el algoritmo EM.
+
+```{r, echo=FALSE}
+```

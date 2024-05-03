@@ -18,21 +18,76 @@ Una familia de distribuciones Pθ con θ ∈ Θ pertenece a la familia exponenci
 
 ## Problema \# 2
 
-La Universidad de California Irvine (UCI) tiene un repositorio de datos de ejemplo para el uso de machine learning y aprendizaje estad´ıstico. Uno de los conjuntos de datos es el denominado Heart Disease, su descripci´on detallada se encuentra en la URL a continuaci´on: <https://archive.ics.uci.edu/ml/datasets/Heart+Disease> Utilice los datos procesados disponibles en el enlace presentado a continuaci´on para el desarrollo del ejercicio, <http://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed>. cleveland.data 1 Con el conjunto de datos completo, construya un modelo de regresi´on log´ıstico con funci´on de enlace logit tomando como respuesta la presencia de la enfermedad cardiaca, use las dem´as variables como explicativas en el modelo de regresi´on. Revise las URL dadas para la definici´on de cada una de las variables y note que debe obtener la variable respuesta categorizando una de las variables del conjunto de datos. Siga los siguientes pasos en la realizaci´on del ejercicio:
+La Universidad de California Irvine (UCI) tiene un repositorio de datos de ejemplo para el uso de machine learning y aprendizaje estadístico. Uno de los conjuntos de datos es el denominado Heart Disease, su descripción detallada se encuentra en la URL a continuación:
+
+<https://archive.ics.uci.edu/ml/datasets/Heart+Disease>
+
+Utilice los datos procesados disponibles en el enlace presentado a continuación para el desarrollo del ejercicio,
+
+<http://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed>.cleveland.data
+
+Con el conjunto de datos completo, construya un modelo de regresión log´ıstico con función de enlace logit tomando como respuesta la presencia de la enfermedad cardiaca, use las demás variables como explicativas en el modelo de regresión. Revise las URL dadas para la definición de cada una de las variables y note que debe obtener la variable respuesta categorizando una de las variables del conjunto de datos. Siga los siguientes pasos en la realización del ejercicio:
 
 ### Item \# 1
 
-Imputar datos: El conjunto de datos tiene datos perdidos en algunas variables. Estos est´an notados con un ?. Impute los valores perdidos como la mediana de los datos para las variables corresponientes.
+Imputar datos: El conjunto de datos tiene datos perdidos en algunas variables. Estos están notados con un ?. Impute los valores perdidos como la mediana de los datos para las variables corresponientes.
 
 ```{r}
 
+# Carga los datos procesados
+data <- read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data", header = FALSE)
+
+# Asigna nombres a las columnas (si no están incluidos en el archivo)
+colnames(data) <- c("age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num")
+
+# Reemplaza los valores "?" con NA
+data[data == "?"] <- NA
+
+# Imputa los valores perdidos con la mediana
+for (col in colnames(data)) {
+  if (any(is.na(data[[col]]))) {
+    data[[col]][is.na(data[[col]])] <- median(data[[col]], na.rm = TRUE)
+  }
+}
+
+# Verifica si los valores NA han sido imputados correctamente
+summary(data)
 ```
 
 ### Item \# 2
 
-Revisar las distribuciones bivariadas: Revise la distribuci´on de la variable respuesta para cada una de las covariables categoricas de manera bivariada. ¿observa alg´un inconveniente con alguna de las variables al hacer el an´alisis?.
+Revisar las distribuciones bivariadas: Revise la distribución de la variable respuesta para cada una de las covariables categoricas de manera bivariada. ¿observa algún inconveniente con alguna de las variables al hacer el análisis?.
 
 ```{r}
+# Tablas de contingencia para covariables categóricas
+tabla_sex_num <- table(data$sex, data$num)
+tabla_cp_num <- table(data$cp, data$num)
+tabla_fbs_num <- table(data$fbs, data$num)
+tabla_restecg_num <- table(data$restecg, data$num)
+tabla_exang_num <- table(data$exang, data$num)
+tabla_slope_num <- table(data$slope, data$num)
+tabla_thal_num <- table(data$thal, data$num)
+
+# Prueba de chi-cuadrado para cada tabla
+chi2_sex <- chisq.test(tabla_sex_num)
+chi2_cp <- chisq.test(tabla_cp_num)
+chi2_fbs <- chisq.test(tabla_fbs_num)
+chi2_restecg <- chisq.test(tabla_restecg_num)
+chi2_exang <- chisq.test(tabla_exang_num)
+chi2_slope <- chisq.test(tabla_slope_num)
+chi2_thal <- chisq.test(tabla_thal_num)
+
+# Imprime los resultados
+print(chi2_sex)
+print(chi2_cp)
+print(chi2_fbs)
+print(chi2_restecg)
+print(chi2_exang)
+print(chi2_slope)
+print(chi2_thal)
+
+
+
 ```
 
 ### Item \# 3

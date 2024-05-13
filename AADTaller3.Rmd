@@ -26,7 +26,7 @@ Utilice los datos procesados disponibles en el enlace presentado a continuación
 
 <http://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed>.cleveland.data
 
-Con el conjunto de datos completo, construya un modelo de regresión log´ıstico con función de enlace logit tomando como respuesta la presencia de la enfermedad cardiaca, use las demás variables como explicativas en el modelo de regresión. Revise las URL dadas para la definición de cada una de las variables y note que debe obtener la variable respuesta categorizando una de las variables del conjunto de datos. Siga los siguientes pasos en la realización del ejercicio:
+Con el conjunto de datos completo, construya un modelo de regresión logístico con función de enlace logit tomando como respuesta la presencia de la enfermedad cardiaca, use las demás variables como explicativas en el modelo de regresión. Revise las URL dadas para la definición de cada una de las variables y note que debe obtener la variable respuesta categorizando una de las variables del conjunto de datos. Siga los siguientes pasos en la realización del ejercicio:
 
 ### Item \# 1
 
@@ -50,8 +50,16 @@ for (col in colnames(data)) {
   }
 }
 
+
+# Se ajusta la variable objetivo NUM para tener dos valores 0 y 1
+
+data$num <- ifelse(data$num %in% c(1, 2, 3, 4), 1, data$num)
+
 # Verifica si los valores NA han sido imputados correctamente
-summary(data)
+formatted_summary <- format(summary(data))
+
+# Imprimir el resumen formateado
+print(formatted_summary)
 ```
 
 ### Item \# 2
@@ -86,22 +94,59 @@ print(chi2_exang)
 print(chi2_slope)
 print(chi2_thal)
 
-
-
 ```
 
 ### Item \# 3
 
-Modelo bivariado: Calcule manualmente (como lo vimos en clase, a partir de la tabla de contingencia), los par´ametros estimados de regresi´on log´ıstica considerando ´unicamente la variable fbs (glucemia en ayunas) y la variable respuesta. Verifique el resultado ajustando el glm correspondiente.
+Modelo bivariado: Calcule manualmente (como lo vimos en clase, a partir de la tabla de contingencia), los parámetros estimados de regresión logística considerando únicamente la variable fbs (glucemia en ayunas) y la variable respuesta. Verifique el resultado ajustando el glm correspondiente.
 
 ```{r}
+
+# Paso 1: Cargar los datos y calcular la tabla de contingencia
+contingency_table <- table(data$fbs, data$num)
+
+# Paso 2: Calcular las proporciones de éxito (probabilidades)
+probabilities <- apply(contingency_table, 1, function(x) x[2] / sum(x))
+
+# Paso 3: Calcular los log odds
+log_odds <- log(probabilities / (1 - probabilities))
+
+# Paso 4: Ajustar el modelo de regresión logística en R
+modelo <- glm(num ~ fbs, data = data, family = binomial)
+
+# Mostrar los resultados
+print("Tabla de Contingencia:")
+print(contingency_table)
+print("Probabilidades:")
+print(probabilities)
+print("Log Odds:")
+print(log_odds)
+print("Resumen del Modelo de Regresión Logística:")
+summary(modelo)
 ```
 
 ### Item \# 4
 
-Modelo multivariado: Ajuste un nuevo modelo con todas las variables. ¿cu´ales variables son significativas mediante el test de Wald? ¿cu´ales no lo son?.
+Modelo multivariado: Ajuste un nuevo modelo con todas las variables. ¿cuáles variables son significativas mediante el test de Wald? ¿cuáles no lo son?.
 
 ```{r}
+
+# Paso 2: Ajusta un modelo de regresión logística con todas las variables
+modelo <- glm(num ~ ., data = data, family = binomial)
+
+# Paso 3: Realiza el test de Wald
+wald_test <- summary(modelo)$coefficients[, "Pr(>|z|)"]
+
+# Paso 4: Identifica las variables significativas
+umbral_significancia <- 0.05
+variables_significativas <- names(wald_test)[wald_test < umbral_significancia]
+
+# Imprime las variables significativas
+print(variables_significativas)
+
+# Imprime las variables no significativas
+variables_no_significativas <- names(wald_test)[wald_test >= umbral_significancia]
+print(variables_no_significativas)
 ```
 
 ### Item \# 5

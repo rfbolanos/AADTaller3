@@ -151,16 +151,18 @@ print(variables_no_significativas)
 
 ### Item \# 5
 
-Visualizaci´on de probabilidades predichas bajo modelo multivariado: Usando el modelo del punto anterior, encuentre las probabilidades de presentar enfermedad cardiaca y visualicelas junto a la variable respuesta. ¿Describe el modelo la presencia de enfermedad cardiaca?.
+Visualización de probabilidades predichas bajo modelo multivariado: Usando el modelo del punto anterior, encuentre las probabilidades de presentar enfermedad cardiaca y visualicelas junto a la variable respuesta. ¿Describe el modelo la presencia de enfermedad cardiaca?.
 
 ```{r}
 ```
 
 ## Problema \# 3
 
-El conjunto de datos AAD-taller03.xlsx contiene la predicci´on de incumplimiento de pago de tarjeta de cr´edito bajo dos modelos log´ısticos diferentes para un total de 9080 clientes. Se cuenta adem´as con la variable de incumplimiento observada al finalizar el periodo. ¿Cu´al de los dos modelos log´ısticos tiene mayor poder de predicci´on? Explique con fundamento estad´ıstico su resultado.
+El conjunto de datos AAD-taller03.xlsx contiene la predicción de incumplimiento de pago de tarjeta de crédito bajo dos modelos logísticos diferentes para un total de 9080 clientes. Se cuenta además con la variable de incumplimiento observada al finalizar el periodo. ¿Cuál de los dos modelos logísticos tiene mayor poder de predicción? Explique con fundamento estadístico su resultado.
 
 ```{r, echo=FALSE}
+
+
 
 ```
 

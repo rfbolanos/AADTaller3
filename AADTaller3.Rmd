@@ -10,11 +10,31 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Problema \# 1
 
-Una familia de distribuciones Pθ con θ ∈ Θ pertenece a la familia exponencial de distribucciones si su fmp/fdp puede escribirse como: p(x\|η) = h(x)exp(η(θ)t(x) − a(θ)) Para funciones reales h(x), a(θ) y t(x). Muestre que tanto la distribución bernoulli (utilizada para la regresión logística), la distribución normal (utilizada en la regresión lineal) y la distribución Poisson (utilizada en la regresión Poisson sobre conteos) pertenecen a esta familia de distribuciones.
+Una familia de distribuciones Pθ con θ ∈ Θ pertenece a la familia exponencial de distribucciones si su fmp/fdp puede escribirse como:
 
-```{r}
+p(x\|η) = h(x)exp(η(θ)t(x) − a(θ))
 
-```
+Para funciones reales h(x), a(θ) y t(x).
+
+Muestre que tanto la distribución bernoulli (utilizada para la regresión logística), la distribución normal (utilizada en la regresión lineal) y la distribución Poisson (utilizada en la regresión Poisson sobre conteos) pertenecen a esta familia de distribuciones.
+
+**Distribución Normal**
+
+$$
+f_Y(y, \theta, \phi) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(y-\mu)^2}{2\sigma^2}\right)
+$$
+
+**Distribución Poisson**
+
+$$
+f_Y(y, \theta, \phi) = \frac{\mu^y}{y!} \exp(-\mu)
+$$
+
+**Distribución Bernaulli**
+
+$$
+f_Y(y,\theta,\phi) = \binom{n}{y} \mu^y (1-\mu)^{n-y}
+$$
 
 ## Problema \# 2
 
@@ -34,16 +54,16 @@ Imputar datos: El conjunto de datos tiene datos perdidos en algunas variables. E
 
 ```{r}
 
-# Carga los datos procesados
+# Cargar el dataset
 data <- read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data", header = FALSE)
 
-# Asigna nombres a las columnas (si no están incluidos en el archivo)
+# Asignar nombres a las columnas de aceurdo a los metadatos
 colnames(data) <- c("age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num")
 
-# Reemplaza los valores "?" con NA
+# Reemplazar los valores "?" con NA
 data[data == "?"] <- NA
 
-# Imputa los valores perdidos con la mediana
+# Imputar los valores perdidos con la mediana
 for (col in colnames(data)) {
   if (any(is.na(data[[col]]))) {
     data[[col]][is.na(data[[col]])] <- median(data[[col]], na.rm = TRUE)
@@ -51,11 +71,11 @@ for (col in colnames(data)) {
 }
 
 
-# Se ajusta la variable objetivo NUM para tener dos valores 0 y 1
+# Ajustar la variable objetivo num para tener dos valores 0 y 1
 
 data$num <- ifelse(data$num %in% c(1, 2, 3, 4), 1, data$num)
 
-# Verifica si los valores NA han sido imputados correctamente
+# Verificar si los valores NA han sido imputados correctamente
 formatted_summary <- format(summary(data))
 
 # Imprimir el resumen formateado
@@ -102,16 +122,16 @@ Modelo bivariado: Calcule manualmente (como lo vimos en clase, a partir de la ta
 
 ```{r}
 
-# Paso 1: Cargar los datos y calcular la tabla de contingencia
+# Cargar los datos y calcular la tabla de contingencia
 contingency_table <- table(data$fbs, data$num)
 
-# Paso 2: Calcular las proporciones de éxito (probabilidades)
+# Calcular las probabilidades
 probabilities <- apply(contingency_table, 1, function(x) x[2] / sum(x))
 
-# Paso 3: Calcular los log odds
+# Calcular los odds
 log_odds <- log(probabilities / (1 - probabilities))
 
-# Paso 4: Ajustar el modelo de regresión logística en R
+# Ajustar el modelo de regresión logística 
 modelo <- glm(num ~ fbs, data = data, family = binomial)
 
 # Mostrar los resultados
@@ -131,21 +151,24 @@ Modelo multivariado: Ajuste un nuevo modelo con todas las variables. ¿cuáles v
 
 ```{r}
 
-# Paso 2: Ajusta un modelo de regresión logística con todas las variables
+# Ajustar el modelo de regresión logística con todas las variables
 modelo <- glm(num ~ ., data = data, family = binomial)
 
-# Paso 3: Realiza el test de Wald
+# Realizar el test de Wald
 wald_test <- summary(modelo)$coefficients[, "Pr(>|z|)"]
 
-# Paso 4: Identifica las variables significativas
+# Identificar las variables significativas
+# Se define un umbral de significancia = 0.05
 umbral_significancia <- 0.05
 variables_significativas <- names(wald_test)[wald_test < umbral_significancia]
 
-# Imprime las variables significativas
-print(variables_significativas)
+# Imprimir las variables significativas
+print("Variables significativas:")
+setdiff(variables_significativas, "(Intercept)")
 
-# Imprime las variables no significativas
+# Imprimir las variables no significativas
 variables_no_significativas <- names(wald_test)[wald_test >= umbral_significancia]
+print("Variables no significativas:")
 print(variables_no_significativas)
 ```
 
@@ -155,12 +178,13 @@ Visualización de probabilidades predichas bajo modelo multivariado: Usando el m
 
 ```{r}
 
+# Obtener los datos del modelo
 data$Predicted_Prob <- predict(modelo, type = "response")
 
 
-
+# Graficar las probalidades
 plot(data$num, data$Predicted_Prob, 
-     xlab = "Enfermedad Cardíaca (AHD)", ylab = "Probabilidad Predicha",
+     xlab = "Heart Disease", ylab = "Probabilidad Predicha",
      main = "Probabilidades de Enfermedad Cardíaca")
 
 # Agregar una línea horizontal en 0.5 para ayudar a visualizar el umbral de decisión

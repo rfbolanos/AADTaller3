@@ -103,7 +103,7 @@ $$
 
 Donde $ \phi = \frac{1}{m} ,  k(\theta) = \log(1 + e^\theta), \theta = logit(\mu) = \log\left(\frac{\mu}{1-\mu}\right) $ y $ a(y, \phi) =  \log\binom{m}{m y}$ 
 
-$$
+
 
 
 ## Problema \# 2

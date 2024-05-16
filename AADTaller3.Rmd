@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Problema \# 1
 
-Una familia de distribuciones Pθ con θ ∈ Θ pertenece a la familia exponencial de distribucciones si su fmp/fdp puede escribirse como: p(x\|η) = h(x)exp(η(θ)t(x) − a(θ)) Para funciones reales h(x), a(θ) y t(x). Muestre que tanto la distribución bernoulli (utilizada para la regresión logística), la distribuci´on normal (utilizada en la regresi´on lineal) y la distribuci´on Poisson (utilizada en la regresi´on Poisson sobre conteos) pertenecen a esta familia de distribuciones.
+Una familia de distribuciones Pθ con θ ∈ Θ pertenece a la familia exponencial de distribucciones si su fmp/fdp puede escribirse como: p(x\|η) = h(x)exp(η(θ)t(x) − a(θ)) Para funciones reales h(x), a(θ) y t(x). Muestre que tanto la distribución bernoulli (utilizada para la regresión logística), la distribución normal (utilizada en la regresión lineal) y la distribución Poisson (utilizada en la regresión Poisson sobre conteos) pertenecen a esta familia de distribuciones.
 
 ```{r}
 
@@ -154,6 +154,23 @@ print(variables_no_significativas)
 Visualización de probabilidades predichas bajo modelo multivariado: Usando el modelo del punto anterior, encuentre las probabilidades de presentar enfermedad cardiaca y visualicelas junto a la variable respuesta. ¿Describe el modelo la presencia de enfermedad cardiaca?.
 
 ```{r}
+
+data$Predicted_Prob <- predict(modelo, type = "response")
+
+
+
+plot(data$num, data$Predicted_Prob, 
+     xlab = "Enfermedad Cardíaca (AHD)", ylab = "Probabilidad Predicha",
+     main = "Probabilidades de Enfermedad Cardíaca")
+
+# Agregar una línea horizontal en 0.5 para ayudar a visualizar el umbral de decisión
+abline(h = 0.5, lty = 2)
+
+# Agregar puntos rojos para las observaciones con enfermedad cardíaca y puntos azules para las observaciones sin enfermedad cardíaca
+points(data$num, data$Predicted_Prob, col = ifelse(data$num == 1, "red", "blue"))
+
+# Agregar leyenda
+legend("topright", legend = c("No", "Sí"), pch = 1, col = c("blue", "red"), bty = "n")
 ```
 
 ## Problema \# 3

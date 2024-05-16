@@ -13,10 +13,52 @@ knitr::opts_chunk$set(echo = TRUE)
 Una familia de distribuciones Pθ con θ ∈ Θ pertenece a la familia exponencial de distribucciones si su fmp/fdp puede escribirse como: $p(x|η) = h(x)exp(η(θ)t(x) − a(θ))$ Para funciones reales h(x), a(θ) y t(x). Muestre que tanto la distribución bernoulli (utilizada para la regresión logística), la distribución normal (utilizada en la regresión lineal) y la distribución Poisson (utilizada en la regresión Poisson sobre conteos) pertenecen a esta familia de distribuciones.
 
 
+Cambiando un poco la notación usaremos la notación del libro \textit{Generalized Linear Models With Examples in R}.
+
+$$
+
+P(y; \theta, \phi) = a(y, \phi) \exp \left( \frac{y\theta - \kappa(\theta)}{\phi} \right)
+
+$$
+donde:
+
+- $\theta$ se llama el \textit{parámetro canónico}.
+- $\kappa(\theta)$ es una función conocida y se llama la \textit{función cumulante}.
+- $\phi > 0$ es el \textit{parámetro de dispersión}.
+- $a(y, \phi)$ es una función de normalización que asegura que (5.1) es una función de probabilidad. Es      decir, $a(y, \phi)$ es la función de $\phi$ y $y$ que asegura que
+ $\int P(y; \theta, \phi) \, dy = 1$ sobre el rango apropiado si $y$ es continua, o que
+$ \sum_y P(y; \theta, \phi) \, dy = 1 $
+si $y$ es discreta. La función $a(y, \phi)$ no siempre puede ser escrita en forma cerrada.
+
+
+
+
+
 ### Distribución normal 
 $$
 f_Y(y, \theta, \phi) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(y-\mu)^2}{2\sigma^2}\right)
 $$
+Partiendo de la parte del exponencial de la función de distribución, aplicamos un poco de algebra:
+$$
+\exp\left(-\frac{(y - u)^2}{2\sigma^2}\right)  \\
+\exp\left(-\frac{y^2 - 2yu + u^2}{2\sigma^2}\right) \\
+\exp\left(\frac{yu - \frac{u^2}{2}}{\sigma^2} - \frac{y^2}{2\sigma^2} \right)
+
+
+$$
+si $\mu = \theta)$ y $\phi = \sigma^2$, entonces la expresión se simplifica a:
+$$
+\frac{1}{\sqrt{2\pi \phi^2}} \exp\left(\frac{y\theta - \frac{\theta^2}{2}}{\phi^2} - \frac{y^2}{2\phi^2} \right)
+$$
+Luego aplicando algunas propiedades de la exponencial tenemos:
+
+$$
+\frac{1}{\sqrt{2\pi \sigma^2}} \exp\left(-\frac{y^2}{2\sigma^2}\right) \exp\left(\frac{y\theta -\frac{\theta^2}{2}}{\phi^2} - \frac{y^2}{2\phi^2} \right)
+
+$$
+Siendo $a(y, \phi) =  \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left(-\frac{y^2}{2\sigma^2}\right)$ y  $\kappa(\theta)= \frac{\theta^2}{2}$.
+
+
 
 ### Distribución Poisson 
 
@@ -24,16 +66,43 @@ $$
 f_Y(y, \theta, \phi) = \frac{\mu^y}{y!} \exp(-\mu)
 
 $$
+
+Aplicamos un poco de algebra descomponemos esto usando propiedades logarítmicas:
+
+$$
+
+=\log\left(\frac{y^u}{y!} \exp(-u)\right)\\
+
+=\log\left(\frac{y^u}{y!}\right) + \log\left(\exp(-u)\right) \\
+
+=y \log(y) - \log(y!) - u \\
+
+= \exp \left( ylog(u) - u - log(y!)  \right ) \\
+
+= \exp \left( ylog(u) - u \right )  \exp(- log(y!)) \\ 
+= \exp \left( y log(u) - u \right ) *  \frac{1}{y!}
+$$
+Siendo $a(y, \phi) =  \frac{1}{y!}$,  $\kappa(\theta)= u$ , $\phi=1$ y $\theta=log(u)$
+
+
 ### Distribución Bernaulli
 
 
 
 $$
-f_Y(y,\theta,\phi) = \binom{n}{y} \mu^y (1-\mu)^{n-y}
+f_Y(y,\theta,\phi) = \binom{n}{ny} \mu^y (1-\mu)^{n(1-y)}
 
 
 $$
+$$
+=\exp\left[ m y \log(\mu) - (m y - m) \log(1 - \mu) + \log\binom{m}{my} \right] \\
+=\exp\left[ \frac{ y \log\left(\frac{\mu}{1-\mu}\right) - \log\left(\frac{1}{1-\mu}\right)}{1/m} + \log\binom{m}{m y} \right] \\
+=\binom{m}{m y} \exp\left[ y \theta - \log(1 + e^\theta)  \right]\\
+$$
 
+Donde $ \phi = \frac{1}{m} ,  k(\theta) = \log(1 + e^\theta), \theta = logit(\mu) = \log\left(\frac{\mu}{1-\mu}\right) $ y $ a(y, \phi) =  \log\binom{m}{m y}$ 
+
+$$
 
 
 ## Problema \# 2

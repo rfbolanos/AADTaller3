@@ -1,18 +1,45 @@
-<<<<<<< HEAD
 ---
-title: "AADTaller3"
-output: html_document
-date: "2024-04-30"
+title: "ANÁLISIS AVANZADO DE DATOS - Taller 3"
+author: "Raúl Andrés Rodriguez - Richard Felipe Bolaños"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: cerulean
+    toc: yes
+    toc_float:
+      collapsed: true
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+options(warn = -1)
+```
+
+## Librerias
+
+```{r, warning = FALSE }
+
+# Cargar las librerias a utilizar
+library(pROC)
+library(ggplot2)
 ```
 
 ## Problema \# 1
 
-Una familia de distribuciones Pθ con θ ∈ Θ pertenece a la familia exponencial de distribucciones si su fmp/fdp puede escribirse como: $p(x|η) = h(x)exp(η(θ)t(x) − a(θ))$ Para funciones reales h(x), a(θ) y t(x). Muestre que tanto la distribución bernoulli (utilizada para la regresión logística), la distribución normal (utilizada en la regresión lineal) y la distribución Poisson (utilizada en la regresión Poisson sobre conteos) pertenecen a esta familia de distribuciones.
+Una familia de distribuciones Pθ con θ ∈ Θ pertenece a la familia
+exponencial de distribucciones si su fmp/fdp puede escribirse como:
 
+p(x\|η) = h(x)exp(η(θ)t(x) − a(θ))
+
+Para funciones reales h(x), a(θ) y t(x).
+
+Muestre que tanto la distribución bernoulli (utilizada para la regresión
+logística), la distribución normal (utilizada en la regresión lineal) y
+la distribución Poisson (utilizada en la regresión Poisson sobre
+conteos) pertenecen a esta familia de distribuciones.
 
 Cambiando un poco la notación usaremos la notación del libro \textit{Generalized Linear Models With Examples in R}.
 
@@ -93,7 +120,6 @@ Siendo $a(y, \phi) =  \frac{1}{y!}$,  $\kappa(\theta)= u$ , $\phi=1$ y $\theta=l
 $$
 f_Y(y,\theta,\phi) = \binom{n}{ny} \mu^y (1-\mu)^{n(1-y)}
 
-
 $$
 $$
 =\exp\left[ m y \log(\mu) - (m y - m) \log(1 - \mu) + \log\binom{m}{my} \right] \\
@@ -104,242 +130,6 @@ $$
 Donde $ \phi = \frac{1}{m} ,  k(\theta) = \log(1 + e^\theta), \theta = logit(\mu) = \log\left(\frac{\mu}{1-\mu}\right) $ y $ a(y, \phi) =  \log\binom{m}{m y}$ 
 
 
-
-
-## Problema \# 2
-
-La Universidad de California Irvine (UCI) tiene un repositorio de datos de ejemplo para el uso de machine learning y aprendizaje estadístico. Uno de los conjuntos de datos es el denominado Heart Disease, su descripción detallada se encuentra en la URL a continuación:
-
-<https://archive.ics.uci.edu/ml/datasets/Heart+Disease>
-
-Utilice los datos procesados disponibles en el enlace presentado a continuación para el desarrollo del ejercicio,
-
-<http://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed>.cleveland.data
-
-Con el conjunto de datos completo, construya un modelo de regresión logístico con función de enlace logit tomando como respuesta la presencia de la enfermedad cardiaca, use las demás variables como explicativas en el modelo de regresión. Revise las URL dadas para la definición de cada una de las variables y note que debe obtener la variable respuesta categorizando una de las variables del conjunto de datos. Siga los siguientes pasos en la realización del ejercicio:
-
-### Item \# 1
-
-Imputar datos: El conjunto de datos tiene datos perdidos en algunas variables. Estos están notados con un ?. Impute los valores perdidos como la mediana de los datos para las variables corresponientes.
-
-```{r}
-
-# Carga los datos procesados
-data <- read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data", header = FALSE)
-
-# Asigna nombres a las columnas (si no están incluidos en el archivo)
-colnames(data) <- c("age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num")
-
-# Reemplaza los valores "?" con NA
-data[data == "?"] <- NA
-
-# Imputa los valores perdidos con la mediana
-for (col in colnames(data)) {
-  if (any(is.na(data[[col]]))) {
-    data[[col]][is.na(data[[col]])] <- median(data[[col]], na.rm = TRUE)
-  }
-}
-
-
-# Se ajusta la variable objetivo NUM para tener dos valores 0 y 1
-
-data$num <- ifelse(data$num %in% c(1, 2, 3, 4), 1, data$num)
-
-# Verifica si los valores NA han sido imputados correctamente
-formatted_summary <- format(summary(data))
-
-# Imprimir el resumen formateado
-print(formatted_summary)
-```
-
-### Item \# 2
-
-Revisar las distribuciones bivariadas: Revise la distribución de la variable respuesta para cada una de las covariables categoricas de manera bivariada. ¿observa algún inconveniente con alguna de las variables al hacer el análisis?.
-
-```{r}
-# Tablas de contingencia para covariables categóricas
-tabla_sex_num <- table(data$sex, data$num)
-tabla_cp_num <- table(data$cp, data$num)
-tabla_fbs_num <- table(data$fbs, data$num)
-tabla_restecg_num <- table(data$restecg, data$num)
-tabla_exang_num <- table(data$exang, data$num)
-tabla_slope_num <- table(data$slope, data$num)
-tabla_thal_num <- table(data$thal, data$num)
-
-# Prueba de chi-cuadrado para cada tabla
-chi2_sex <- chisq.test(tabla_sex_num)
-chi2_cp <- chisq.test(tabla_cp_num)
-chi2_fbs <- chisq.test(tabla_fbs_num)
-chi2_restecg <- chisq.test(tabla_restecg_num)
-chi2_exang <- chisq.test(tabla_exang_num)
-chi2_slope <- chisq.test(tabla_slope_num)
-chi2_thal <- chisq.test(tabla_thal_num)
-
-# Imprime los resultados
-print(chi2_sex)
-print(chi2_cp)
-print(chi2_fbs)
-print(chi2_restecg)
-print(chi2_exang)
-print(chi2_slope)
-print(chi2_thal)
-
-```
-
-### Item \# 3
-
-Modelo bivariado: Calcule manualmente (como lo vimos en clase, a partir de la tabla de contingencia), los parámetros estimados de regresión logística considerando únicamente la variable fbs (glucemia en ayunas) y la variable respuesta. Verifique el resultado ajustando el glm correspondiente.
-
-```{r}
-
-# Paso 1: Cargar los datos y calcular la tabla de contingencia
-contingency_table <- table(data$fbs, data$num)
-
-# Paso 2: Calcular las proporciones de éxito (probabilidades)
-probabilities <- apply(contingency_table, 1, function(x) x[2] / sum(x))
-
-# Paso 3: Calcular los log odds
-log_odds <- log(probabilities / (1 - probabilities))
-
-# Paso 4: Ajustar el modelo de regresión logística en R
-modelo <- glm(num ~ fbs, data = data, family = binomial)
-
-# Mostrar los resultados
-print("Tabla de Contingencia:")
-print(contingency_table)
-print("Probabilidades:")
-print(probabilities)
-print("Log Odds:")
-print(log_odds)
-print("Resumen del Modelo de Regresión Logística:")
-summary(modelo)
-```
-
-### Item \# 4
-
-Modelo multivariado: Ajuste un nuevo modelo con todas las variables. ¿cuáles variables son significativas mediante el test de Wald? ¿cuáles no lo son?.
-
-```{r}
-
-# Paso 2: Ajusta un modelo de regresión logística con todas las variables
-modelo <- glm(num ~ ., data = data, family = binomial)
-
-# Paso 3: Realiza el test de Wald
-wald_test <- summary(modelo)$coefficients[, "Pr(>|z|)"]
-
-# Paso 4: Identifica las variables significativas
-umbral_significancia <- 0.05
-variables_significativas <- names(wald_test)[wald_test < umbral_significancia]
-
-# Imprime las variables significativas
-print(variables_significativas)
-
-# Imprime las variables no significativas
-variables_no_significativas <- names(wald_test)[wald_test >= umbral_significancia]
-print(variables_no_significativas)
-```
-
-### Item \# 5
-
-Visualización de probabilidades predichas bajo modelo multivariado: Usando el modelo del punto anterior, encuentre las probabilidades de presentar enfermedad cardiaca y visualicelas junto a la variable respuesta. ¿Describe el modelo la presencia de enfermedad cardiaca?.
-
-```{r}
-
-data$Predicted_Prob <- predict(modelo, type = "response")
-
-
-
-plot(data$num, data$Predicted_Prob, 
-     xlab = "Enfermedad Cardíaca (AHD)", ylab = "Probabilidad Predicha",
-     main = "Probabilidades de Enfermedad Cardíaca")
-
-# Agregar una línea horizontal en 0.5 para ayudar a visualizar el umbral de decisión
-abline(h = 0.5, lty = 2)
-
-# Agregar puntos rojos para las observaciones con enfermedad cardíaca y puntos azules para las observaciones sin enfermedad cardíaca
-points(data$num, data$Predicted_Prob, col = ifelse(data$num == 1, "red", "blue"))
-
-# Agregar leyenda
-legend("topright", legend = c("No", "Sí"), pch = 1, col = c("blue", "red"), bty = "n")
-```
-
-## Problema \# 3
-
-El conjunto de datos AAD-taller03.xlsx contiene la predicción de incumplimiento de pago de tarjeta de crédito bajo dos modelos logísticos diferentes para un total de 9080 clientes. Se cuenta además con la variable de incumplimiento observada al finalizar el periodo. ¿Cuál de los dos modelos logísticos tiene mayor poder de predicción? Explique con fundamento estadístico su resultado.
-
-```{r, echo=FALSE}
-
-
-
-```
-
-## Problema \# 4
-
-Repita el problema 2, pero en lugar de imputar los datos mediante la mediana en el punto 1, utilice el algoritmo EM.
-
-```{r, echo=FALSE}
-```
-=======
----
-title: "ANÁLISIS AVANZADO DE DATOS - Taller 3"
-author: "Raúl Andrés Rodriguez - Richard Felipe Bolaños"
-date: "`r Sys.Date()`"
-output: 
-  html_document:
-    theme: cerulean
-    toc: yes
-    toc_float:
-      collapsed: true
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-options(warn = -1)
-```
-
-## Librerias
-
-```{r, warning = FALSE }
-
-# Cargar las librerias a utilizar
-library(pROC)
-library(ggplot2)
-```
-
-## Problema \# 1
-
-Una familia de distribuciones Pθ con θ ∈ Θ pertenece a la familia
-exponencial de distribucciones si su fmp/fdp puede escribirse como:
-
-p(x\|η) = h(x)exp(η(θ)t(x) − a(θ))
-
-Para funciones reales h(x), a(θ) y t(x).
-
-Muestre que tanto la distribución bernoulli (utilizada para la regresión
-logística), la distribución normal (utilizada en la regresión lineal) y
-la distribución Poisson (utilizada en la regresión Poisson sobre
-conteos) pertenecen a esta familia de distribuciones.
-
-**Distribución Normal**
-
-$$
-f_Y(y, \theta, \phi) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(y-\mu)^2}{2\sigma^2}\right)
-$$
-
-**Distribución Poisson**
-
-$$
-f_Y(y, \theta, \phi) = \frac{\mu^y}{y!} \exp(-\mu)
-$$
-
-**Distribución Bernaulli**
-
-$$
-f_Y(y,\theta,\phi) = \binom{n}{y} \mu^y (1-\mu)^{n-y}
-$$
 
 ## Problema \# 2
 

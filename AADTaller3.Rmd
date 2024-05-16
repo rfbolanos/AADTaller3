@@ -34,28 +34,26 @@ Imputar datos: El conjunto de datos tiene datos perdidos en algunas variables. E
 
 ```{r}
 
-# Carga los datos procesados
+# Cargar el dataset
 data <- read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data", header = FALSE)
 
-# Asigna nombres a las columnas (si no están incluidos en el archivo)
+# Asignar nombres a las columnas
 colnames(data) <- c("age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num")
 
-# Reemplaza los valores "?" con NA
+# Reemplazar los valores "?" con NA
 data[data == "?"] <- NA
 
-# Imputa los valores perdidos con la mediana
+# Imputar los valores perdidos con la mediana
 for (col in colnames(data)) {
   if (any(is.na(data[[col]]))) {
     data[[col]][is.na(data[[col]])] <- median(data[[col]], na.rm = TRUE)
   }
 }
 
-
-# Se ajusta la variable objetivo NUM para tener dos valores 0 y 1
-
+# Ajustar la variable objetivo num para tener dos valores 0 y 1
 data$num <- ifelse(data$num %in% c(1, 2, 3, 4), 1, data$num)
 
-# Verifica si los valores NA han sido imputados correctamente
+# Verificar si los valores NA han sido imputados correctamente
 formatted_summary <- format(summary(data))
 
 # Imprimir el resumen formateado

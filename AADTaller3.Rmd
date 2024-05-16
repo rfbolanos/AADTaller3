@@ -10,11 +10,31 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Problema \# 1
 
-Una familia de distribuciones Pθ con θ ∈ Θ pertenece a la familia exponencial de distribucciones si su fmp/fdp puede escribirse como: p(x\|η) = h(x)exp(η(θ)t(x) − a(θ)) Para funciones reales h(x), a(θ) y t(x). Muestre que tanto la distribución bernoulli (utilizada para la regresión logística), la distribución normal (utilizada en la regresión lineal) y la distribución Poisson (utilizada en la regresión Poisson sobre conteos) pertenecen a esta familia de distribuciones.
+Una familia de distribuciones Pθ con θ ∈ Θ pertenece a la familia exponencial de distribucciones si su fmp/fdp puede escribirse como: $p(x|η) = h(x)exp(η(θ)t(x) − a(θ))$ Para funciones reales h(x), a(θ) y t(x). Muestre que tanto la distribución bernoulli (utilizada para la regresión logística), la distribución normal (utilizada en la regresión lineal) y la distribución Poisson (utilizada en la regresión Poisson sobre conteos) pertenecen a esta familia de distribuciones.
 
-```{r}
 
-```
+### Distribución normal 
+$$
+f_Y(y, \theta, \phi) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(y-\mu)^2}{2\sigma^2}\right)
+$$
+
+### Distribución Poisson 
+
+$$
+f_Y(y, \theta, \phi) = \frac{\mu^y}{y!} \exp(-\mu)
+
+$$
+### Distribución Bernaulli
+
+
+
+$$
+f_Y(y,\theta,\phi) = \binom{n}{y} \mu^y (1-\mu)^{n-y}
+
+
+$$
+
+
 
 ## Problema \# 2
 
